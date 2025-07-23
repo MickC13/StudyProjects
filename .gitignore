@@ -1,6 +1,9 @@
 # Prerequisites
 *.d
-
+*.tlog
+*.lastbuildstate
+*.log
+*.recipe
 # Object files
 *.o
 *.ko
