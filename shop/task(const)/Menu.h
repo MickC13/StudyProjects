@@ -34,7 +34,7 @@
             std::cout << "\n--- " << m_Title << " ---\n";
             int counter = 1;
            
-            for (auto it = m_Chran.begin(); it != m_Chran.end(); ++it) {
+            for (m_Chran<int>::it = m_Chran.begin(); it != m_Chran.end(); ++it) {
                 std::cout << counter << ". " << *it << '\n';
                 ++counter;
             }

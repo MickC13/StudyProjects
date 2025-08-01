@@ -5,26 +5,38 @@
 #include "Electronics.h"
 #include <vector>
 #include "Customer.h"
+
+template <typename T>
+void displayFiltered(const std::vector<Product*>& products) {
+	for (auto it = products.begin(); it != products.end(); ++it) {
+
+		if (T* obj = dynamic_cast<T*>(*it)) {
+			obj->display();
+		}
+	}
+}
+
 int main()
 {
 	Customer customer("Adam Baranov ");
 	int choice;
-	std::vector<Books> books = {
-	Books("1984", 350.0, "George Orwell"),
-	Books("Преступление и наказание", 280.0, "Ф.М. Достоевский")
-	};
+	Books* book1 = new Books("1984", 350.0, "George Orwell");
+	Books* book2 = new Books("Преступление и наказание", 280.0, "Ф.М. Достоевский");
+	Clothing* shirt = new Clothing("Футболка", 1200.0, "L");
+	Clothing* jeans = new Clothing("Джинсы", 3500.0, "M");
+	Electronics* phone = new Electronics("Смартфон", 29999.0, 24);
+	Electronics* headphones = new Electronics("Наушники", 5990.0, 12);
 
-	std::vector<Clothing> clothes = {
-	  Clothing("Футболка", 1200.0, "L"),
-	  Clothing("Джинсы", 3500.0, "M")
-	};
-
-	std::vector<Electronics> electronics = {
-	  Electronics("Смартфон", 29999.0, 24),
-	  Electronics("Наушники", 5990.0, 12)
-	};
 
 	std::vector<Product*> allProducts;
+	allProducts.push_back(book1);
+	allProducts.push_back(book2);
+	allProducts.push_back(shirt);
+	allProducts.push_back(jeans);
+	allProducts.push_back(phone);
+	allProducts.push_back(headphones);
+
+	
 
 	for (size_t i = 0; i < books.size(); i++) {
 		allProducts.push_back(&books[i]);
@@ -77,6 +89,7 @@ int main()
 				}
 				break;
 			case 2: 
+
 				for (size_t i = 0; i < clothes.size(); i++) {
 					clothes[i].display();
 				}
@@ -116,5 +129,5 @@ int main()
 
 }
 
-
+// ujnuujnujjunuj
 

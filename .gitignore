@@ -9,6 +9,12 @@
 *.ko
 *.obj
 *.elf
+*.suo
+*.db
+*.ipch
+*.vsidx
+*.json
+/shop/.vs/	
 
 # Linker output
 *.ilk

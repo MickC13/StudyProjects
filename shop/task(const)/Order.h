@@ -1,12 +1,11 @@
 #pragma once
-#include <iostream>
-#include <vector>
-#include "Product.h"
-class Order {
-    std::vector<Product> items;
+
+#include "Product_list.h" 
+
+class Order : public ProductList { 
     bool isPaid = false;
 
-    Order(const std::vector<Product>& products) : items(products) {}
+public:
     void pay();
-    void display();
+    void display() const override; 
 };
