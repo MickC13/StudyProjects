@@ -12,6 +12,16 @@ using namespace std;
 const string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const int REPEAT_COUNT = 100000;
 
+
+bool checkAlphabet(const string& input) {
+    for (char c : input) {
+        if (c < 'A' || c > 'Z') {
+            return false;
+        }
+    }
+    return true;
+}
+
 // Функция для генерации случайного множества символов
 set<char> generateRandomSet(int minSize = 5, int maxSize = 20) {
     int size = rand() % (maxSize - minSize + 1) + minSize;
@@ -176,10 +186,13 @@ int main() {
         // Ручной ввод
         vector<string> set_names = { "A", "B", "C", "D" };
         for (int i = 0; i < 4; i++) {
-            cout << "Enter set " << set_names[i] << " (as a string without spaces, uppercase letters A-Z): ";
             string input;
-            cin >> input;
-
+            while (true) {
+                cout << "Enter set " << set_names[i] << " (as a string without spaces, uppercase letters A-Z only): ";
+                cin >> input;
+                if (checkAlphabet(input)) break;
+                cout << "Error: Only uppercase English letters (A-Z) are allowed. Please try again.\n";
+            }
             // Заполняем все структуры данных
             set<char> temp_set;
             for (char c : input) {
