@@ -3,30 +3,31 @@ package Lab2;
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.table.DefaultTableModel;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
- * Класс приложения для учета клиентов почтового отделения.
- * Реализует графический интерфейс пользователя для работы с данными клиентов.
+ * Главный класс приложения "Почта России" для управления клиентами.
+ * Содержит графический интерфейс для отображения и управления списком клиентов.
  * 
- * @author [Mikhail & Nikita]
+ * @author Mikhail
  * @version 1.0
  */
 
 public class Prog {
-
-    private JFrame mainFrame;
-    private DefaultTableModel model;
-    private JButton addButton, editButton, deleteButton, searchButton;
-    private JToolBar toolBar;
-    private JScrollPane scroll;
-    private JTable clientsTable;
-    private JTextField searchField, clientNameField, telephoneField, addressField, newspaperField;
-    private JComboBox<String> surnameComboBox;
+	
+	/**
+	 * Создает и отображает главное окно приложения с интерфейсом управления клиентами.
+	 * Окно содержит:
+	 * - Таблицу с данными клиентов
+	 * - Панель инструментов с кнопками действий
+	 * - Панель ввода данных клиента
+	 * - Панель поиска клиентов
+	 * 
+	 * Размер окна: 800x600 пикселей
+	 * Расположение: центр экрана
+	 */
     
     public void show() {
-        mainFrame = new JFrame("Pochta Rossii");
+        JFrame mainFrame = new JFrame("Pochta Rossii");
         mainFrame.setSize(800, 600);
         mainFrame.setLocationRelativeTo(null);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -40,166 +41,143 @@ public class Prog {
             {"Petrov", "225-25-52", "Sodovaya 13", "Modelist"}
         };
         
-        model = new DefaultTableModel(data, columns) {
+        DefaultTableModel model = new DefaultTableModel(data, columns) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Запрещаем редактирование ячеек напрямую
+                return false;
             }
         };
         
-        clientsTable = new JTable(model);
-        scroll = new JScrollPane(clientsTable);
+        JTable clientsTable = new JTable(model);
+        JScrollPane scroll = new JScrollPane(clientsTable);
         
         // Создание панели инструментов
-        toolBar = new JToolBar("Toolbar");
+        JToolBar toolBar = new JToolBar();
         toolBar.setFloatable(false);
         
-        // Создание кнопок с иконками
-        try {
-            addButton = new JButton(new ImageIcon("./images/ADD.png"));
-            editButton = new JButton(new ImageIcon("./images/EDIT.png"));
-            deleteButton = new JButton(new ImageIcon("./images/Recycle.jpg"));
-            searchButton = new JButton(new ImageIcon("./images/search.png"));
-        } catch (Exception e) {
-            // Если изображения не найдены, используем текстовые кнопки
-            addButton = new JButton("Добавить");
-            editButton = new JButton("Редактировать");
-            deleteButton = new JButton("Удалить");
-            searchButton = new JButton("Поиск");
-        }
-        
-        // Установка подсказок для кнопок
-        addButton.setToolTipText("Добавить нового клиента");
-        editButton.setToolTipText("Редактировать выбранного клиента");
-        deleteButton.setToolTipText("Удалить выбранного клиента");
-        searchButton.setToolTipText("Поиск клиента");
+        // Создание кнопок
+        JButton addButton = createButton("ADD.png", "Добавить");
+        JButton editButton = createButton("EDIT.png", "Редактировать");
+        JButton deleteButton = createButton("Recycle.jpg", "Удалить");
+        JButton searchButton = createButton("SEARCH.png", "Поиск");
         
         toolBar.add(addButton);
         toolBar.add(editButton);
         toolBar.add(deleteButton);
-        
-        // Добавление разделителя
         toolBar.addSeparator();
         
-        // Создание выпадающего списка для выбора фамилий
-        surnameComboBox = new JComboBox<>();
+        JComboBox<String> surnameComboBox = new JComboBox<>();
+        updateSurnameComboBox(model, surnameComboBox);
+        
         toolBar.add(new JLabel("Фамилия:"));
         toolBar.add(surnameComboBox);
         
-        // Обновляем комбобокс
-        updateSurnameComboBox();
-        
-        // Создание панели ввода данных
+        // Создание панелей
         JPanel inputPanel = createInputPanel();
+        JPanel searchPanel = createSearchPanel(searchButton);
         
-        // Создание панели поиска
-        JPanel searchPanel = createSearchPanel();
-        
-        // Компоновка компонентов на главном окне
+        // Компоновка
         mainFrame.add(toolBar, BorderLayout.NORTH);
         mainFrame.add(scroll, BorderLayout.CENTER);
         
         JPanel southPanel = new JPanel(new BorderLayout());
         southPanel.add(inputPanel, BorderLayout.NORTH);
         southPanel.add(searchPanel, BorderLayout.SOUTH);
-        
         mainFrame.add(southPanel, BorderLayout.SOUTH);
         
-        // Обработчики событий удалены
-        
-        // Отображение окна
         mainFrame.setVisible(true);
     }
     
     /**
-     * Создает панель для ввода данных о клиенте
+     * Создает кнопку с изображением из папки images и текстом подсказки.
+     * Если изображение не найдено, создает текстовую кнопку.
+     * 
+     * @param iconName имя файла изображения (например, "ADD.png")
+     * @param tooltip текст подсказки, отображаемый при наведении
+     * @return созданная кнопка JButton
      */
+    
+    private JButton createButton(String iconName, String tooltip) {
+        try {
+            JButton button = new JButton(new ImageIcon("./images/" + iconName));
+            button.setToolTipText(tooltip);
+            return button;
+        } catch (Exception e) {
+            return new JButton(tooltip);
+        }
+    }
+    
+    /**
+     * Создает панель для ввода данных клиента с полями:
+     * - Имя клиента
+     * - Телефон
+     * - Адрес
+     * - Газета
+     * 
+     * Панель имеет заголовок "Данные клиента" и использует GridLayout (2x4).
+     * 
+     * @return созданная панель JPanel
+     */
+    
     private JPanel createInputPanel() {
-        JPanel inputPanel = new JPanel(new GridLayout(2, 4, 5, 5));
-        inputPanel.setBorder(BorderFactory.createTitledBorder("Данные клиента"));
+        JPanel panel = new JPanel(new GridLayout(2, 4, 5, 5));
+        panel.setBorder(BorderFactory.createTitledBorder("Данные клиента"));
         
-        inputPanel.add(new JLabel("Имя клиента:"));
-        clientNameField = new JTextField();
-        inputPanel.add(clientNameField);
+        String[] labels = {"Имя клиента:", "Телефон:", "Адрес:", "Газета:"};
+        for (String label : labels) {
+            panel.add(new JLabel(label));
+            panel.add(new JTextField());
+        }
         
-        inputPanel.add(new JLabel("Телефон:"));
-        telephoneField = new JTextField();
-        inputPanel.add(telephoneField);
-        
-        inputPanel.add(new JLabel("Адрес:"));
-        addressField = new JTextField();
-        inputPanel.add(addressField);
-        
-        inputPanel.add(new JLabel("Газета:"));
-        newspaperField = new JTextField();
-        inputPanel.add(newspaperField);
-        
-        return inputPanel;
+        return panel;
     }
     
     /**
-     * Создает панель для поиска клиентов
+     * Создает панель для поиска клиентов с текстовым полем и кнопкой поиска.
+     * Панель имеет заголовок "Поиск клиента" и использует BorderLayout.
+     * 
+     * @param searchButton кнопка поиска для добавления на панель
+     * @return созданная панель JPanel
      */
-    private JPanel createSearchPanel() {
-        JPanel searchPanel = new JPanel(new BorderLayout(5, 5));
-        searchPanel.setBorder(BorderFactory.createTitledBorder("Поиск клиента"));
+    
+    private JPanel createSearchPanel(JButton searchButton) {
+        JPanel panel = new JPanel(new BorderLayout(5, 5));
+        panel.setBorder(BorderFactory.createTitledBorder("Поиск клиента"));
         
-        searchField = new JTextField();
+        JTextField searchField = new JTextField();
+        panel.add(new JLabel("Поиск:"), BorderLayout.WEST);
+        panel.add(searchField, BorderLayout.CENTER);
+        panel.add(searchButton, BorderLayout.EAST);
         
-        searchPanel.add(new JLabel("Поиск:"), BorderLayout.WEST);
-        searchPanel.add(searchField, BorderLayout.CENTER);
-        searchPanel.add(searchButton, BorderLayout.EAST);
-        
-        return searchPanel;
+        return panel;
     }
     
     /**
-     * Обновляет список фамилий в выпадающем списке
+     * Обновляет содержимое комбо-бокса фамилиями из таблицы клиентов.
+     * Сохраняет текущее выделение, если это возможно.
+     * 
+     * @param model модель таблицы с данными клиентов
+     * @param comboBox комбо-бокс для обновления
      */
-    private void updateSurnameComboBox() {
-        // Сохраняем текущий выбор
-        String selectedSurname = (String) surnameComboBox.getSelectedItem();
+    private void updateSurnameComboBox(DefaultTableModel model, JComboBox<String> comboBox) {
+        String selected = (String) comboBox.getSelectedItem();
+        comboBox.removeAllItems();
         
-        // Очищаем список
-        surnameComboBox.removeAllItems();
-        
-        // Собираем уникальные фамилии из таблицы
-        Set<String> surnames = new HashSet<>();
         for (int i = 0; i < model.getRowCount(); i++) {
-            String surname = (String) model.getValueAt(i, 0);
-            surnames.add(surname);
+            comboBox.addItem((String) model.getValueAt(i, 0));
         }
         
-        // Добавляем фамилии в комбобокс
-        for (String surname : surnames) {
-            surnameComboBox.addItem(surname);
-        }
-        
-        // Восстанавливаем предыдущий выбор, если он еще существует
-        if (selectedSurname != null && surnames.contains(selectedSurname)) {
-            surnameComboBox.setSelectedItem(selectedSurname);
-        } else if (surnameComboBox.getItemCount() > 0) {
-            surnameComboBox.setSelectedIndex(0);
+        if (selected != null && comboBox.getItemCount() > 0) {
+            comboBox.setSelectedItem(selected);
         }
     }
-    
     /**
-     * Очищает поля ввода
+     * Главный метод, запускающий приложение.
+     * Создает и отображает графический интерфейс в потоке обработки событий Swing.
+     * 
+     * @param args аргументы командной строки (не используются)
      */
-    private void clearInputFields() {
-        clientNameField.setText("");
-        telephoneField.setText("");
-        addressField.setText("");
-        newspaperField.setText("");
-    }
-    
     public static void main(String[] args) {
-        // Запуск приложения в потоке обработки событий Swing
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new Prog().show();
-            }
-        });
+        SwingUtilities.invokeLater(() -> new Prog().show());
     }
 }
