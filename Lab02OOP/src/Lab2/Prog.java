@@ -173,11 +173,11 @@ public class Prog {
     }
     /**
      * Главный метод, запускающий приложение.
-     * Создает и отображает графический интерфейс в потоке обработки событий Swing.
+     * Создает и отображает графический интерфейс.
      * 
      * @param args аргументы командной строки (не используются)
      */
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new Prog().show());
+    	new Prog().show();
     }
 }
