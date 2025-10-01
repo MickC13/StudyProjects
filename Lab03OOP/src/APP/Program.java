@@ -9,8 +9,8 @@ import javax.swing.table.DefaultTableModel;
  * Главный класс приложения "Почта России" для управления клиентами.
  * Содержит графический интерфейс для отображения и управления списком клиентов.
  * 
- * @author Nikita
- * @version 1.0
+ * @author Mikhail
+ * @version 1.1
  */
 
 public class Program {
@@ -318,7 +318,13 @@ public class Program {
         newspaperField.setText("");
     }
     
-   
+    /**
+     * Создает кнопку с иконкой и подсказкой.
+     * 
+     * @param iconName имя файла иконки
+     * @param tooltip текст подсказки
+     * @return созданная кнопка
+     */
     private JButton createButton(String iconName, String tooltip) {
         try {
             JButton button = new JButton(new ImageIcon("./images/" + iconName));
@@ -329,6 +335,11 @@ public class Program {
         }
     }
     
+    /**
+     * Создает панель для ввода данных клиента.
+     * 
+     * @return панель с полями ввода
+     */
     private JPanel createInputPanel() {
         JPanel panel = new JPanel(new GridLayout(2, 4, 5, 5));
         panel.setBorder(BorderFactory.createTitledBorder("Данные клиента"));
@@ -351,6 +362,12 @@ public class Program {
         return panel;
     }
     
+    /**
+     * Создает панель для поиска клиентов.
+     * 
+     * @param searchButton кнопка поиска
+     * @return панель поиска
+     */
     private JPanel createSearchPanel(JButton searchButton) {
         JPanel panel = new JPanel(new BorderLayout(5, 5));
         panel.setBorder(BorderFactory.createTitledBorder("Поиск клиента"));
@@ -363,6 +380,12 @@ public class Program {
         return panel;
     }
     
+    /**
+     * Обновляет комбобокс фамилиями из таблицы.
+     * 
+     * @param model модель таблицы
+     * @param comboBox комбобокс для обновления
+     */
     private void updateSurnameComboBox(DefaultTableModel model, JComboBox<String> comboBox) {
         String selected = (String) comboBox.getSelectedItem();
         comboBox.removeAllItems();
@@ -376,6 +399,11 @@ public class Program {
         }
     }
     
+    /**
+     * Главный метод приложения.
+     * 
+     * @param args аргументы командной строки
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
