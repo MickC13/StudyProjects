@@ -292,7 +292,7 @@ public class Prog {
      */
     private void saveDataToFile() {
         FileDialog saveDialog = new FileDialog(mainFrame, "Save Client Data", FileDialog.SAVE);
-        saveDialog.setFile("clients.txt");
+        saveDialog.setFile("clients.csv");
         saveDialog.setVisible(true);
         
         String directory = saveDialog.getDirectory();
@@ -309,7 +309,7 @@ public class Prog {
             for (int i = 0; i < model.getColumnCount(); i++) {
                 writer.write(model.getColumnName(i));
                 if (i < model.getColumnCount() - 1) {
-                    writer.write(",");
+                    writer.write(";");
                 }
             }
             writer.newLine();
@@ -320,7 +320,7 @@ public class Prog {
                     String value = model.getValueAt(i, j).toString();
                     writer.write(value);
                     if (j < model.getColumnCount() - 1) {
-                        writer.write(",");
+                        writer.write(";");
                     }
                 }
                 writer.newLine();
@@ -347,7 +347,7 @@ public class Prog {
      */
     private void loadDataFromFile() {
         FileDialog loadDialog = new FileDialog(mainFrame, "Load Client Data", FileDialog.LOAD);
-        loadDialog.setFile("*.txt");
+        loadDialog.setFile("*.csv");
         loadDialog.setVisible(true);
         
         String directory = loadDialog.getDirectory();
@@ -386,7 +386,7 @@ public class Prog {
                     continue; // Skip header line
                 }
                 
-                String[] rowData = line.split(",");
+                String[] rowData = line.split(";");
                 if (rowData.length == 4) {
                     model.addRow(rowData);
                 } else {
