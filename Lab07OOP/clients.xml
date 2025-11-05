@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<postal_clients>
+    <client id="1">
+        <name>Ivanov</name>
+        <phone>451-50-70</phone>
+        <address>Kommunorsky 22</address>
+        <newspaper>Rastishka</newspaper>
+    </client>
+    <client id="2">
+        <name>Frolov</name>
+        <phone>789-63-45</phone>
+        <address>Lesnaya 44</address>
+        <newspaper>Basketbolchik</newspaper>
+    </client>
+    <client id="3">
+        <name>Petrov</name>
+        <phone>225-25-52</phone>
+        <address>Sodovaya 13</address>
+        <newspaper>Modelist</newspaper>
+    </client>
+    <client id="4">
+        <name>Nikitos</name>
+        <phone>666-88-99</phone>
+        <address>Monkey</address>
+        <newspaper>GGGGGGGG</newspaper>
+    </client>
+    <client id="5">
+        <name>Lednev</name>
+        <phone>111-22-33</phone>
+        <address>Popova 38</address>
+        <newspaper>Elektrik</newspaper>
+    </client>
+</postal_clients>
