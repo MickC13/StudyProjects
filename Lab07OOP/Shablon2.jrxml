@@ -28,9 +28,6 @@
 	</field>
 	<background splitType="Stretch"/>
 	<title height="70" splitType="Stretch">
-		<element kind="image" uuid="d7cb9de5-f1d6-4e9a-8441-72f5e2127742" x="275" y="0" width="300" height="64">
-			<expression><![CDATA["leaf_banner_green.png"]]></expression>
-		</element>
 		<element kind="staticText" uuid="3eb8e1ab-7e38-4368-89db-62b6501a8c67" x="0" y="13" width="263" height="33" vTextAlign="Middle" style="Title">
 			<text><![CDATA[Leaf Green Title]]></text>
 		</element>

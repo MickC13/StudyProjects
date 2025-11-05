@@ -519,7 +519,7 @@ public class Prog {
     private void generateReportWithFlag() {
         try {
             // Сначала сохраняем данные во временный XML
-            File tempFile = File.createTempFile("clients_temp", ".xml");
+            File tempFile = File.createTempFile("clients", ".xml");
             saveDataToXML(tempFile.getAbsolutePath());
             
             FileDialog openFile2 = new FileDialog(mainFrame, "Укажите путь .jrxml к шаблону", FileDialog.LOAD);
@@ -536,9 +536,9 @@ public class Prog {
             FileDialog openFile3 = new FileDialog(mainFrame, "Укажите место сохранения", FileDialog.SAVE);
             
             if ("CHOOSE_PDF".equals(flag)) {
-                openFile3.setFile("clients_report.pdf");
+                openFile3.setFile("*.pdf");
             } else {
-                openFile3.setFile("clients_report.html");
+                openFile3.setFile("*.html");
             }
             
             openFile3.setVisible(true);
