@@ -29,10 +29,10 @@
 	<background splitType="Stretch"/>
 	<title height="70" splitType="Stretch">
 		<element kind="staticText" uuid="3eb8e1ab-7e38-4368-89db-62b6501a8c67" x="0" y="13" width="263" height="33" vTextAlign="Middle" style="Title">
-			<text><![CDATA[Leaf Green Title]]></text>
+			<text><![CDATA[Pochta Rossii]]></text>
 		</element>
 		<element kind="staticText" uuid="0b5308cc-82cf-49a0-8011-6f875d4c5e32" x="100" y="46" width="174" height="22" style="SubTitle">
-			<text><![CDATA[Leaf Green SubTitle]]></text>
+			<text><![CDATA[DataBase clients]]></text>
 		</element>
 	</title>
 	<pageHeader splitType="Stretch"/>

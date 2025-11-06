@@ -2,24 +2,24 @@
 <jasperReport name="Shablon1" language="java" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="691f9507-baf9-4169-b1b8-828971cd1a87">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ClientsData"/>
 	<query language="xPath"><![CDATA[/postal_clients/client]]></query>
-	<field name="id" class="java.lang.Integer">
+	<field name="id" class="java.lang.String">
 		<description><![CDATA[@id]]></description>
 		<property name="net.sf.jasperreports.xpath.field.expression" value="@id"/>
 	</field>
 	<field name="name" class="java.lang.String">
-		<description><![CDATA[name]]></description>
+		<description><![CDATA[@name]]></description>
 		<property name="net.sf.jasperreports.xpath.field.expression" value="name"/>
 	</field>
 	<field name="phone" class="java.lang.String">
-		<description><![CDATA[phone]]></description>
+		<description><![CDATA[@phone]]></description>
 		<property name="net.sf.jasperreports.xpath.field.expression" value="phone"/>
 	</field>
 	<field name="address" class="java.lang.String">
-		<description><![CDATA[address]]></description>
+		<description><![CDATA[@address]]></description>
 		<property name="net.sf.jasperreports.xpath.field.expression" value="address"/>
 	</field>
 	<field name="newspaper" class="java.lang.String">
-		<description><![CDATA[newspaper]]></description>
+		<description><![CDATA[@newspaper]]></description>
 		<property name="net.sf.jasperreports.xpath.field.expression" value="newspaper"/>
 	</field>
 	<background/>

@@ -36,6 +36,15 @@ import javax.xml.parsers.ParserConfigurationException;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRXmlDataSource;
 
+/**
+ * Главный класс приложения "Почта России - Управление клиентами".
+ * Предоставляет графический интерфейс для управления клиентской базой данных,
+ * включая добавление, редактирование, удаление, поиск клиентов,
+ * а также экспорт данных в XML и генерацию отчетов в PDF/HTML форматах.
+ * 
+ * @author Mikhail
+ * @version 7.0
+ */
 public class Prog {
     // Объявления графических компонентов
     private JFrame mainFrame;
@@ -61,22 +70,44 @@ public class Prog {
     private List<String[]> originalClientsData;
     private static String flag = "";
 
+    /**
+     * Пользовательское исключение для обработки ошибок при добавлении клиентов.
+     */
     private class AddClientException extends Exception {
         private static final long serialVersionUID = 1L;
+        
+        /**
+         * Конструктор исключения с сообщением об ошибке.
+         * 
+         * @param message сообщение об ошибке
+         */
         public AddClientException(String message) {
             super(message);
         }
     }
 
+    /**
+     * Пользовательское исключение для обработки ошибок при поиске клиентов.
+     */
     private class SearchClientException extends Exception {
         private static final long serialVersionUID = 1L;
+        
+        /**
+         * Конструктор исключения с сообщением об ошибке.
+         * 
+         * @param message сообщение об ошибке
+         */
         public SearchClientException(String message) {
             super(message);
         }
     }
     
     /**
-     * Создает кнопку с иконкой
+     * Создает кнопку с иконкой.
+     * 
+     * @param iconPath путь к файлу иконки
+     * @param tooltip текст всплывающей подсказки
+     * @return созданная кнопка с иконкой или текстом, если иконка не найдена
      */
     private JButton createButtonWithIcon(String iconPath, String tooltip) {
         JButton button = new JButton();
@@ -108,7 +139,9 @@ public class Prog {
     }
     
     /**
-     * @param show функция создания окна
+     * Создает и отображает главное окно приложения.
+     * Инициализирует все графические компоненты, устанавливает компоновку
+     * и добавляет обработчики событий.
      */
     public void show() {
         // Создание окна
@@ -150,13 +183,13 @@ public class Prog {
         JPanel clientsPanel = new JPanel(new BorderLayout());
         
         // Создание таблицы с данными клиентов
-        String[] clientColumns = {"Фамилия", "Телефон", "Адрес", "Газета"};
+        String[] clientColumns = {"Surname", "Phone", "Address", "Newspaper"};
         String[][] clientData = {
-            {"Иванов", "451-50-70", "Коммунарская 22", "Растишка"},
-            {"Петров", "225-25-52", "Содовая 13", "Моделист"},
-            {"Сидоров", "789-63-45", "Лесная 44", "Баскетболист"},
-            {"Козлов", "111-22-33", "Попова 38", "Электрик"},
-            {"Фролов", "555-66-77", "Садовая 5", "Футболист"}
+            {"Ivanov", "451-50-70", "Kommunarskaya 22", "Rastishka"},
+            {"Petrov", "225-25-52", "Sodovaya 13", "Modelist"},
+            {"Sidorov", "789-63-45", "Lesnaya 44", "Basketbolist"},
+            {"Kozlov", "111-22-33", "Popova 38", "Elektrik"},
+            {"Frolov", "555-66-77", "Sadovaya 5", "Futbolist"}
         };
         
         // Сохраняем исходные данные
@@ -212,7 +245,15 @@ public class Prog {
         mainFrame.setVisible(true);
     }
 
-    // Обработчик исключений для кнопки "добавить клиента"
+    /**
+     * Проверяет корректность данных клиента перед добавлением или редактированием.
+     * 
+     * @param name фамилия клиента
+     * @param phone телефон клиента в формате XXX-XX-XX
+     * @param address адрес клиента
+     * @param newspaper название газеты
+     * @throws AddClientException если данные не проходят валидацию
+     */
     private void ValidateClients(String name, String phone, String address, String newspaper) throws AddClientException {
         if (name.isEmpty() || phone.isEmpty() || address.isEmpty() || newspaper.isEmpty()) {
             throw new AddClientException("Все поля должны быть заполнены!!!");
@@ -228,7 +269,15 @@ public class Prog {
         if (address.length() < 5) throw new AddClientException("Адрес слишком короткий!");
     }
     
-    // Обработчик исключений для кнопки "поиск"
+    /**
+     * Проверяет корректность параметров поиска.
+     * 
+     * @param name фамилия для поиска
+     * @param phone телефон для поиска
+     * @param address адрес для поиска
+     * @param newspaper газета для поиска
+     * @throws SearchClientException если все поля поиска пустые
+     */
     private void ValidateSearch(String name, String phone, String address, String newspaper) throws SearchClientException {
         if (name.isEmpty() && phone.isEmpty() && address.isEmpty() && newspaper.isEmpty()) {
             throw new SearchClientException("Хотя бы одно поле должно быть заполнено!!!");
@@ -236,7 +285,7 @@ public class Prog {
     }
 
     /**
-     * Метод для добавления обработчиков событий
+     * Добавляет обработчики событий для всех кнопок и элементов управления.
      */
     private void addEventHandlers() {
     	
@@ -315,7 +364,8 @@ public class Prog {
     }
 
     /**
-     * Метод для редактирования выбранного клиента
+     * Редактирует данные выбранного клиента.
+     * Открывает диалоговое окно для изменения информации о клиенте.
      */
     private void editSelectedClient() {
         int selectedRow = clientsTable.getSelectedRow();
@@ -417,7 +467,8 @@ public class Prog {
     }
 
     /**
-     * Метод для удаления выбранного клиента
+     * Удаляет выбранного клиента из таблицы и исходных данных.
+     * Запрашивает подтверждение перед удалением.
      */
     private void deleteSelectedClient() {
         int selectedRow = clientsTable.getSelectedRow();
@@ -463,22 +514,22 @@ public class Prog {
     }
 
     /**
-     * @generateReport Метод для генерации отчета
+     * Отображает диалоговое окно для выбора формата отчета (PDF или HTML).
      */
     private void generatePDFandHTMLReports() {
         try {
             JDialog chooseDialog = new JDialog(mainFrame, "Выберите вариант отчёта", true);
-            chooseDialog.setSize(400, 300);
+            chooseDialog.setSize(300, 400);
             chooseDialog.setLocationRelativeTo(mainFrame);
             chooseDialog.setLayout(new BorderLayout());
 
             JButton saveToPDF = new JButton("PDF");
             JButton saveToHtml = new JButton("HTML");
 
-            saveToPDF.setPreferredSize(new Dimension(150, 90));
-            saveToHtml.setPreferredSize(new Dimension(150, 90));
+            saveToPDF.setPreferredSize(new Dimension(100, 70));
+            saveToHtml.setPreferredSize(new Dimension(100, 70));
 
-            java.awt.Font buttonFont = new java.awt.Font("Arial", java.awt.Font.BOLD, 25);
+            java.awt.Font buttonFont = new java.awt.Font("Arial", java.awt.Font.BOLD, 16);
             saveToPDF.setFont(buttonFont);
             saveToHtml.setFont(buttonFont);
 
@@ -516,6 +567,11 @@ public class Prog {
         }
     }
     
+    /**
+     * Генерирует отчет в выбранном формате (PDF или HTML).
+     * Сохраняет данные во временный XML файл, запрашивает шаблон отчета
+     * и место сохранения, затем генерирует отчет.
+     */
     private void generateReportWithFlag() {
         try {
             // Сначала сохраняем данные во временный XML
@@ -563,6 +619,14 @@ public class Prog {
         }
     }
 
+    /**
+     * Генерирует отчет с использованием JasperReports.
+     * 
+     * @param datasource путь к XML файлу с данными
+     * @param xpath XPath выражение для доступа к данным в XML
+     * @param template путь к файлу шаблона отчета (.jrxml)
+     * @param resultpath путь для сохранения сгенерированного отчета
+     */
     private void generateReport(String datasource, String xpath, String template, String resultpath) {
         try {
             JRDataSource ds = new JRXmlDataSource(datasource, xpath);
@@ -586,7 +650,9 @@ public class Prog {
     }
     
     /**
-     * @performSearch Метод для выполнения поиска по фамилии, телефону, адресу и газете
+     * Выполняет поиск клиентов по заданным критериям.
+     * Поиск осуществляется по фамилии, телефону, адресу и названию газеты.
+     * Поддерживает частичное совпадение для адреса и газеты.
      */
     private void performSearch() {
         String selectedSurname = (String) surnameComboBox.getSelectedItem();
@@ -636,7 +702,8 @@ public class Prog {
     }
     
     /**
-     * @filterBySurname Метод для фильтрации по фамилии
+     * Фильтрует клиентов по выбранной фамилии из комбобокса.
+     * Если выбрано "Все", отображаются все клиенты.
      */
     private void filterBySurname() {
         String selectedSurname = (String) surnameComboBox.getSelectedItem();
@@ -657,7 +724,7 @@ public class Prog {
     }
     
     /**
-     * @resetFilters Метод для сброса всех фильтров
+     * Сбрасывает все фильтры поиска и отображает полный список клиентов.
      */
     private void resetFilters() {
         clientPhone.setText("");
@@ -672,7 +739,8 @@ public class Prog {
     }
     
     /**
-     * Метод для обновления комбобокса с фамилиями
+     * Обновляет содержимое комбобокса с фамилиями клиентов.
+     * Добавляет уникальные фамилии из исходных данных и пункт "Все".
      */
     private void updateSurnameComboBox() {
         String selected = (String) surnameComboBox.getSelectedItem();
@@ -700,7 +768,9 @@ public class Prog {
     }
     
     /**
-     * @addClients Метод добавления клиентов
+     * Добавляет нового клиента в базу данных.
+     * Открывает диалоговое окно для ввода данных нового клиента.
+     * Проверяет корректность введенных данных перед добавлением.
      */
     private void addClients() {
     	JDialog addDialog = new JDialog(mainFrame, "Добавление нового клиента", true);
@@ -773,7 +843,8 @@ public class Prog {
     }
 
     /**
-     * @saveDataToXML функция сохранения данных в файл
+     * Сохраняет данные клиентов в XML файл.
+     * Открывает диалоговое окно для выбора места сохранения файла.
      */
     private void saveDataToXML() {
         try {
@@ -796,6 +867,11 @@ public class Prog {
         }
     }
     
+    /**
+     * Сохраняет данные клиентов в указанный XML файл.
+     * 
+     * @param filename путь к файлу для сохранения
+     */
     private void saveDataToXML(String filename) {
         try {
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -847,7 +923,8 @@ public class Prog {
     }
 
     /**
-     * @loadDataFromXML функция загрузки данных из файла 
+     * Загружает данные клиентов из XML файла.
+     * Открывает диалоговое окно для выбора файла для загрузки.
      */
     private void loadDataFromXML() {
         FileDialog load = new FileDialog(mainFrame, "Загрузка из XML", FileDialog.LOAD);
@@ -904,7 +981,11 @@ public class Prog {
     }
     
     /**
-     * Вспомогательный метод для получения текста из XML элемента
+     * Вспомогательный метод для получения текстового содержимого XML элемента.
+     * 
+     * @param parent родительский XML элемент
+     * @param tagName имя дочернего элемента
+     * @return текстовое содержимое элемента или пустая строка, если элемент не найден
      */
     private String getElementText(Element parent, String tagName) {
         NodeList nodes = parent.getElementsByTagName(tagName);
@@ -915,6 +996,12 @@ public class Prog {
         return "";
     }
 
+    /**
+     * Точка входа в приложение.
+     * Создает и отображает графический интерфейс в потоке обработки событий Swing.
+     * 
+     * @param args аргументы командной строки (не используются)
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
