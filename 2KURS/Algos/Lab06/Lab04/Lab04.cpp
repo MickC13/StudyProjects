@@ -24,16 +24,51 @@ public:
     ScreenOverflowException(const std::string& msg)
         : ShapeException(msg) {}
 };
+
+// Точка вне экрана
+class PointOffScreenException : public ShapeException {
+public:
+    PointOffScreenException(const std::string& msg)
+        : ShapeException(msg) {}
+};
+
+// Нехватка места после поворота/изменения
+class PlacementException : public ShapeException {
+public:
+    PlacementException(const std::string& msg)
+        : ShapeException(msg) {}
+};
+
+// Повторный поворот или отражение
+class RepeatedTransformException : public ShapeException {
+public:
+    RepeatedTransformException(const std::string& msg)
+        : ShapeException(msg) {}
+};
+
+// Неправильная сторона присоединения
+class WrongAttachmentSideException : public ShapeException {
+public:
+    WrongAttachmentSideException(const std::string& msg)
+        : ShapeException(msg) {}
+};
+
 // Недостающие функции примыкания (влево и вправо)
 void left(shape& p, const shape& q) {
     point w = q.west();
     point e = p.east();
+
+    if (!on_screen(w.x - (e.x - p.west().x) - 1, w.y))
+        throw WrongAttachmentSideException("Cannot attach shape on the left");
     p.move(w.x - e.x - 1, w.y - e.y);
 }
 
 void right(shape& p, const shape& q) {
     point e = q.east();
     point w = p.west();
+    if (!on_screen(e.x + (p.east().x - w.x) + 1, e.y))
+        throw WrongAttachmentSideException("Cannot attach shape on the right");
+
     p.move(e.x - w.x + 1, e.y - w.y);
 }
 
@@ -43,6 +78,7 @@ namespace {
     class rectangle_cross : public rectangle {
         line vline;   // вертикальная линия через центр
         line hline;   // горизонтальная линия через центр
+        bool rotated = false;
         
         // Обновляет линии после изменения размеров или поворота
         void update_lines() {
@@ -98,21 +134,41 @@ namespace {
         }
 
         void move_to(point p) {
+            if (!on_screen(p.x, p.y))
+                throw PointOffScreenException("Target point is outside the screen");
             move(p.x - sw.x - (ne.x-sw.x)/2, p.y-sw.y -(ne.y - sw.y) / 2);
         }
         void resize(double r) override {
+            if (r <= 0)
+                throw InvalidShapeParameters("Resize coefficient must be positive");
+
+            point sw = swest();
+            point ne = neast();
+
+            int new_w = (ne.x - sw.x) * r;
+            int new_h = (ne.y - sw.y) * r;
+
+            if (!on_screen(sw.x + new_w, sw.y + new_h))
+                throw PlacementException("Not enough space on screen after resize");
             rectangle::resize(r);
             update_lines();
         }
 
         void rotate_left () override {
+            if (rotated)
+                throw RepeatedTransformException("Shape already rotated");
             rectangle::rotate_left();
             update_lines();
+            rotated = true;
         }
 
         void rotate_right() override {
+
+            if (rotated)
+                throw RepeatedTransformException("Shape already rotated");
             rectangle::rotate_right();
             update_lines();
+            rotated = true;
         }
 
         // Поворот на 180° (вниз)
@@ -130,7 +186,7 @@ namespace {
 int main() {
     try {
 
-
+       // rectangle_cross bad(point(500, 500), point(510, 510));
         setlocale(LC_ALL, "Rus");
         screen_init();
 
@@ -158,14 +214,16 @@ int main() {
 
         // Повороты добавленных фигур согласно заданию:
         // позиция 1 — вниз (180°)
-        cross1.rotate_down();
+        //cross1.rotate_down();
+
+        //cross1.rotate_left();
         // позиция 10 — влево
-       // cross10.rotate_left();
+        //cross10.rotate_left();
         // позиция 11 — вправо
         //cross11.rotate_right();
 
         // Небольшое изменение размеров для лучшего вида (необязательно)
-
+        //cross10.move_to(point(500, 500));
 
         shape_refresh();
         std::cout << "=== Prepared... ===\n";
@@ -183,7 +241,7 @@ int main() {
 
         cross10.move_to(face.left_eye());
         cross11.move_to(face.right_eye());
-
+        //cross1.move(1000, 0);
         shape_refresh();
         std::cout << "=== Ready! ===\n";
         std::cin.get(); // Смотрим результат
@@ -191,16 +249,25 @@ int main() {
         screen_destroy();
     }
     catch (const InvalidShapeParameters& e) {
-        std::cout << "Ошибка параметров фигуры: "
-            << e.what() << std::endl;
+        std::cout << "Error in shape parameters: " << e.what() << std::endl;
     }
     catch (const ScreenOverflowException& e) {
-        std::cout << "Ошибка выхода за экран: "
-            << e.what() << std::endl;
+        std::cout << "Error leaving the screen: " << e.what() << std::endl;
+    }
+    catch (const PointOffScreenException& e) {
+        std::cout << "Point error: " << e.what() << std::endl;
+    }
+    catch (const PlacementException& e) {
+        std::cout << "Placement error: " << e.what() << std::endl;
+    }
+    catch (const RepeatedTransformException& e) {
+        std::cout << "Transform error: " << e.what() << std::endl;
+    }
+    catch (const WrongAttachmentSideException& e) {
+        std::cout << "Attachment error: " << e.what() << std::endl;
     }
     catch (const std::exception& e) {
-        std::cout << "Другая ошибка: "
-            << e.what() << std::endl;
+        std::cout << "Another error: " << e.what() << std::endl;
     }
     return 0;
 }
