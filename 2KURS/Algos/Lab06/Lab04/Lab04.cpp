@@ -58,16 +58,19 @@ void left(shape& p, const shape& q) {
     point w = q.west();
     point e = p.east();
 
-    if (!on_screen(w.x - (e.x - p.west().x) - 1, w.y))
-        throw WrongAttachmentSideException("Cannot attach shape on the left");
+    if (w.y != e.y) {
+        throw WrongAttachmentSideException("Wrong side attachment on LEFT");
+    }
     p.move(w.x - e.x - 1, w.y - e.y);
 }
 
 void right(shape& p, const shape& q) {
     point e = q.east();
     point w = p.west();
-    if (!on_screen(e.x + (p.east().x - w.x) + 1, e.y))
-        throw WrongAttachmentSideException("Cannot attach shape on the right");
+    if (e.y != w.y) {
+        throw WrongAttachmentSideException("Wrong side attachment on RIGHT");
+    }
+
 
     p.move(e.x - w.x + 1, e.y - w.y);
 }
@@ -185,8 +188,8 @@ namespace {
 
 int main() {
     try {
-
-       // rectangle_cross bad(point(500, 500), point(510, 510));
+       
+       // ***rectangle_cross bad(point(500, 500), point(510, 510));
         setlocale(LC_ALL, "Rus");
         screen_init();
 
@@ -223,8 +226,8 @@ int main() {
         //cross11.rotate_right();
 
         // Небольшое изменение размеров для лучшего вида (необязательно)
-        //cross10.move_to(point(500, 500));
-
+        //****cross10.move_to(point(500, 500));
+        
         shape_refresh();
         std::cout << "=== Prepared... ===\n";
         std::cin.get(); // Смотрим результат поворотов
@@ -233,7 +236,7 @@ int main() {
         up(brim, face);
         up(hat, brim);
         //down(beard, face);
-
+        // *** left(cross1, face);
         // Прикрепляем прямоугольники с крестом
         down(cross1, face);    // позиция 1 (галстук) — вниз от лица
         left(cross10, face);   // позиция 10 (левый глаз) — слева от лица
@@ -241,7 +244,7 @@ int main() {
 
         cross10.move_to(face.left_eye());
         cross11.move_to(face.right_eye());
-        //cross1.move(1000, 0);
+        //*** cross1.move(1000, 0);
         shape_refresh();
         std::cout << "=== Ready! ===\n";
         std::cin.get(); // Смотрим результат
