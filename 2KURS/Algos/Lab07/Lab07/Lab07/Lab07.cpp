@@ -2,22 +2,22 @@
 #include <unordered_set>
 #include <vector>
 #include <algorithm>
+#include <cstdlib>
+#include <ctime>
 
 using namespace std;
 
 class MyContainer {
 private:
-    unordered_set<int> dataSet; // множество
-    vector<int> seq;            // последовательность
+    unordered_set<int> dataSet;
+    vector<int> seq;
 
 public:
-    // итераторы
     auto begin() { return seq.begin(); }
     auto end() { return seq.end(); }
     auto begin() const { return seq.begin(); }
     auto end() const { return seq.end(); }
 
-    // вставка (как множество)
     void insert(int x) {
         if (dataSet.insert(x).second) {
             seq.push_back(x);
@@ -30,11 +30,12 @@ public:
         cout << endl;
     }
 
-    int size() const {
-        return seq.size();
+    void clear() {
+        seq.clear();
+        dataSet.clear();
     }
 
-    // ОБЪЕДИНЕНИЕ
+    // операции
     MyContainer Union(const MyContainer& other) const {
         MyContainer res = *this;
         for (int x : other)
@@ -42,7 +43,6 @@ public:
         return res;
     }
 
-    // ПЕРЕСЕЧЕНИЕ
     MyContainer Intersection(const MyContainer& other) const {
         MyContainer res;
         for (int x : seq)
@@ -51,7 +51,6 @@ public:
         return res;
     }
 
-    // XOR
     MyContainer SymmetricDifference(const MyContainer& other) const {
         MyContainer res;
 
@@ -66,7 +65,6 @@ public:
         return res;
     }
 
-    // РАЗНОСТЬ
     MyContainer Difference(const MyContainer& other) const {
         MyContainer res;
         for (int x : seq)
@@ -75,15 +73,13 @@ public:
         return res;
     }
 
-    //  concat сохраняет повторы
     void Concat(const MyContainer& other) {
         for (int x : other.seq) {
-            seq.push_back(x);        // добавляем ВСЕ
-            dataSet.insert(x);       // множество обновляем
+            seq.push_back(x);
+            dataSet.insert(x);
         }
     }
 
-    // ERASE
     void Erase(int l, int r) {
         if (seq.empty()) return;
 
@@ -93,24 +89,68 @@ public:
 
         seq.erase(seq.begin() + l, seq.begin() + r + 1);
 
-        // пересобираем множество
         dataSet.clear();
         for (int x : seq)
             dataSet.insert(x);
     }
 };
 
+
+// 🔹 ручной ввод
+void inputContainer(MyContainer& c, const string& name) {
+    int n, x;
+    cout << "Введите количество элементов для " << name << ": ";
+    cin >> n;
+
+    cout << "Введите элементы:\n";
+    for (int i = 0; i < n; i++) {
+        cin >> x;
+        c.insert(x);
+    }
+}
+
+//  случайная генерация
+void randomContainer(MyContainer& c, const string& name) {
+    int n = rand() % 6 + 3; // от 3 до 8 элементов
+    cout << name << " (random): ";
+
+    for (int i = 0; i < n; i++) {
+        int x = rand() % 10; // числа 0-9
+        c.insert(x);
+    }
+    c.print();
+}
+
+
 int main() {
     setlocale(LC_ALL, "Russian");
+    srand(time(0));
+
     MyContainer A, B, C, D, E;
 
-    for (int x : {1, 2, 3, 4}) A.insert(x);
-    for (int x : {3, 4, 5, 6}) B.insert(x);
-    for (int x : {4, 5, 6, 7}) C.insert(x);
-    for (int x : {2, 3, 4, 8}) D.insert(x);
-    for (int x : {2, 3, 4, 5}) E.insert(x);
+    int mode;
+    cout << "Выберите режим:\n";
+    cout << "1 - ручной ввод\n";
+    cout << "2 - случайная генерация\n";
+    cout << "Ваш выбор: ";
+    cin >> mode;
 
-    cout << "=== Исходные множества ===" << endl;
+    if (mode == 1) {
+        inputContainer(A, "A");
+        inputContainer(B, "B");
+        inputContainer(C, "C");
+        inputContainer(D, "D");
+        inputContainer(E, "E");
+    }
+    else {
+        randomContainer(A, "A");
+        randomContainer(B, "B");
+        randomContainer(C, "C");
+        randomContainer(D, "D");
+        randomContainer(E, "E");
+    }
+
+    cout << "\n=== Исходные множества ===" << endl;
     cout << "A = "; A.print();
     cout << "B = "; B.print();
     cout << "C = "; C.print();
@@ -120,35 +160,30 @@ int main() {
     cout << "\n=== Вычисляем выражение ===" << endl;
     cout << "(A ∪ ((B ⊕ C) ∩ D)) ∩ E\n" << endl;
 
-    // ШАГ 1: B ⊕ C
     auto step1 = B.SymmetricDifference(C);
-    cout << "[1] B ⊕ C (симметрическая разность): ";
+    cout << "[1] B ⊕ C: ";
     step1.print();
 
-    // ШАГ 2: (B ⊕ C) ∩ D
     auto step2 = step1.Intersection(D);
-    cout << "[2] (B ⊕ C) ∩ D (пересечение): ";
+    cout << "[2] (B ⊕ C) ∩ D: ";
     step2.print();
 
-    // ШАГ 3: A ∪ ...
     auto step3 = A.Union(step2);
-    cout << "[3] A ∪ [результат] (объединение): ";
+    cout << "[3] A ∪ ...: ";
     step3.print();
 
-    // ШАГ 4: ... ∩ E
     auto result = step3.Intersection(E);
-    cout << "[4] Итог: (A ∪ ((B ⊕ C) ∩ D)) ∩ E = ";
+    cout << "[4] RESULT: ";
     result.print();
 
-    // Демонстрация последовательности
-    cout << "\n=== Работа с последовательностью ===" << endl;
+    cout << "\n=== Последовательность ===" << endl;
 
     result.Concat(A);
-    cout << "[5] Concat(result, A) (добавление последовательности): ";
+    cout << "[5] Concat: ";
     result.print();
 
     result.Erase(1, 2);
-    cout << "[6] Erase(1,2) (удаление по индексам): ";
+    cout << "[6] Erase(1,2): ";
     result.print();
 
     return 0;
