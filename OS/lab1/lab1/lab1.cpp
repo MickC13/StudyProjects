@@ -6,7 +6,7 @@ using namespace std;
 
 void listDrives() {
     DWORD drives = GetLogicalDrives();
-    cout << "Available Drives:\n";
+    cout << "Доступные диски:\n";
 
     for (int i = 0; i < 26; i++) {
         if (drives & (1 << i)) {
@@ -18,17 +18,17 @@ void listDrives() {
 
 void driveInfo() {
     string disk;
-    cout << "Input drive (for examlpe C:\\): ";
+    cout << "Введите диск (например C:\\): ";
     cin >> disk;
 
     UINT type = GetDriveTypeA(disk.c_str());
 
-    cout << "type of Drive: ";
+    cout << "Тип диска: ";
     switch (type) {
-    case DRIVE_FIXED: cout << "Local drive\n"; break;
-    case DRIVE_REMOVABLE: cout << "Removable drive\n"; break;
+    case DRIVE_FIXED: cout << "Жесткий диск\n"; break;
+    case DRIVE_REMOVABLE: cout << "Съёмный диск\n"; break;
     case DRIVE_CDROM: cout << "CD/DVD\n"; break;
-    default: cout << "Another\n";
+    default: cout << "Другой\n";
     }
 
     char volumeName[MAX_PATH]; 
@@ -69,9 +69,9 @@ void createDir() {
     cin >> path;
 
     if (CreateDirectoryA(path.c_str(), NULL))
-        cout << "Directory created.\n";
+        cout << "Каталог создан.\n";
     else
-        cout << "Error of creation.\n";
+        cout << "Ошибка создания.\n";
 }
 
 void removeDir() {
@@ -112,26 +112,27 @@ void copyFileFunc() {
     string src, dst;
     cout << "Исходный файл: ";
     cin >> src;
-    cout << "Куда копировать: ";
+    cout << "Куда копировать (полный путь): ";
     cin >> dst;
 
-    if (CopyFileA(src.c_str(), dst.c_str(), TRUE))
-        cout << "Файл скопирован.\n";
+    if (CopyFileA(src.c_str(), dst.c_str(), FALSE))
+        cout << "Файл успешно скопирован.\n";
     else
-        cout << "Ошибка копирования.\n";
-}
+        cout << "Ошибка копирования: " << GetLastError() << endl;
+}   
 
 void moveFileFunc() {
     string src, dst;
     cout << "Исходный файл: ";
     cin >> src;
-    cout << "Куда переместить: ";
+    cout << "Куда переместить (полный путь): ";
     cin >> dst;
 
-    if (MoveFileExA(src.c_str(), dst.c_str(), MOVEFILE_COPY_ALLOWED))
+    if (MoveFileExA(src.c_str(), dst.c_str(),
+        MOVEFILE_COPY_ALLOWED | MOVEFILE_REPLACE_EXISTING))
         cout << "Файл перемещен.\n";
     else
-        cout << "Ошибка перемещения.\n";
+        cout << "Ошибка перемещения: " << GetLastError() << endl;
 }
 
 void fileAttributes() {
@@ -164,28 +165,42 @@ void setReadOnly() {
         return;
     }
 
-    if (SetFileAttributesA(path.c_str(), attrs | FILE_ATTRIBUTE_READONLY))
-        cout << "Атрибут READONLY установлен.\n";
+    cout << "1 - установить READONLY\n";
+    cout << "2 - убрать READONLY\n";
+
+    int choice;
+    cin >> choice;
+
+    if (choice == 1) {
+        attrs |= FILE_ATTRIBUTE_READONLY;
+    }
+    else if (choice == 2) {
+        attrs &= ~FILE_ATTRIBUTE_READONLY;
+    }
+
+    if (SetFileAttributesA(path.c_str(), attrs))
+        cout << "Атрибут изменён.\n";
     else
-        cout << "Ошибка изменения атрибутов.\n";
+        cout << "Ошибка изменения.\n";
 }
 
 int main() {
+    setlocale(LC_CTYPE, "rus");
     int choice;
 
     do {
         cout << "\n=== МЕНЮ ===\n";
-        cout << "1. List of drives\n";
-        cout << "2. Info about drive\n";
-        cout << "3. Create dir\n";
-        cout << "4. Delete dir\n";
-        cout << "5. Create file\n";
-        cout << "6. Copy file\n";
-        cout << "7. remove file\n";
-        cout << "8. Attributes of file\n";
-        cout << "9. Make file READONLY\n";
-        cout << "0. Exit\n";
-        cout << "Choice: ";
+        cout << "1. Список дисков\n";
+        cout << "2. Информация о диске\n";
+        cout << "3. Создать каталог\n";
+        cout << "4. Удалить каталог\n";
+        cout << "5. Создать файл\n";
+        cout << "6. Скопировать файл\n";
+        cout << "7. Переместить файл\n";
+        cout << "8. Атрибуты файла\n";
+        cout << "9. Сделать файл только для чтения\n";
+        cout << "0. Выход\n";
+        cout << "Выбор: ";
         cin >> choice;
 
         switch (choice) {
