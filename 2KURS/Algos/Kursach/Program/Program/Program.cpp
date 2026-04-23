@@ -96,9 +96,8 @@ int main() {
     setlocale(LC_ALL, "Russian");
     srand(time(0));
 
-    string filepath = "C:\\Git\\abob\\2KURS\\Algos\\Lab07\\Lab07\\Lab07\\results.txt";
+    string filepath = "C:\\Git\\abob\\2KURS\\Algos\\Kursach\\Program\\Program\\results.txt";
 
-    // 🔥 ГАРАНТИРОВАННАЯ ОЧИСТКА ФАЙЛА
     {
         ofstream clearFile(filepath, ios::trunc);
     }
