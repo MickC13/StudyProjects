@@ -1,4 +1,7 @@
 ﻿#include <windows.h>
+#include <ktmw32.h>
+#pragma comment(lib, "KtmW32.lib")
+
 #include <iostream>
 #include <string>
 
@@ -31,7 +34,7 @@ void driveInfo() {
     default: cout << "Другой\n";
     }
 
-    char volumeName[MAX_PATH]; 
+    char volumeName[MAX_PATH];
     char fileSystem[MAX_PATH];
     DWORD serial, maxCompLen, flags;
 
@@ -85,54 +88,123 @@ void removeDir() {
         cout << "Ошибка удаления.\n";
 }
 
+// создание файла
 void createFileFunc() {
     string path;
     cout << "Введите путь нового файла: ";
     cin >> path;
 
-    HANDLE hFile = CreateFileA(
+    HANDLE hTransaction = CreateTransaction(NULL, 0, 0, 0, 0, 0, NULL);
+
+    if (hTransaction == INVALID_HANDLE_VALUE) {
+        cout << "Ошибка транзакции: " << GetLastError() << endl;
+        return;
+    }
+
+    HANDLE hFile = CreateFileTransactedA(
         path.c_str(),
         GENERIC_WRITE,
         0,
         NULL,
         CREATE_NEW,
         FILE_ATTRIBUTE_NORMAL,
-        NULL);
+        NULL,
+        hTransaction,
+        NULL,
+        NULL
+    );
 
     if (hFile != INVALID_HANDLE_VALUE) {
-        cout << "Файл создан.\n";
         CloseHandle(hFile);
+
+        if (CommitTransaction(hTransaction))
+            cout << "Файл создан (commit).\n";
+        else
+            cout << "Ошибка commit: " << GetLastError() << endl;
     }
     else {
-        cout << "Ошибка создания файла.\n";
+        RollbackTransaction(hTransaction);
+        cout << "Ошибка создания файла: " << GetLastError() << endl;
     }
+
+    CloseHandle(hTransaction);
 }
 
+// копируем файл
 void copyFileFunc() {
     string src, dst;
     cout << "Исходный файл: ";
     cin >> src;
-    cout << "Куда копировать (полный путь): ";
+    cout << "Куда копировать: ";
     cin >> dst;
 
-    if (CopyFileA(src.c_str(), dst.c_str(), FALSE))
-        cout << "Файл успешно скопирован.\n";
-    else
-        cout << "Ошибка копирования: " << GetLastError() << endl;
-}   
+    HANDLE hTransaction = CreateTransaction(NULL, 0, 0, 0, 0, 0, NULL);
 
+    if (hTransaction == INVALID_HANDLE_VALUE) {
+        cout << "Ошибка транзакции: " << GetLastError() << endl;
+        return;
+    }
+
+    BOOL result = CopyFileTransactedA(
+        src.c_str(),
+        dst.c_str(),
+        NULL,
+        NULL,
+        FALSE,
+        0,
+        hTransaction
+    );
+
+    if (result) {
+        if (CommitTransaction(hTransaction))
+            cout << "Файл скопирован (commit).\n";
+        else
+            cout << "Ошибка commit: " << GetLastError() << endl;
+    }
+    else {
+        RollbackTransaction(hTransaction);
+        cout << "Ошибка копирования: " << GetLastError() << endl;
+    }
+
+    CloseHandle(hTransaction);
+}
+
+//  перемещение
 void moveFileFunc() {
     string src, dst;
     cout << "Исходный файл: ";
     cin >> src;
-    cout << "Куда переместить (полный путь): ";
+    cout << "Куда переместить: ";
     cin >> dst;
 
-    if (MoveFileExA(src.c_str(), dst.c_str(),
-        MOVEFILE_COPY_ALLOWED | MOVEFILE_REPLACE_EXISTING))
-        cout << "Файл перемещен.\n";
-    else
+    HANDLE hTransaction = CreateTransaction(NULL, 0, 0, 0, 0, 0, NULL);
+
+    if (hTransaction == INVALID_HANDLE_VALUE) {
+        cout << "Ошибка транзакции: " << GetLastError() << endl;
+        return;
+    }
+
+    BOOL result = MoveFileTransactedA(
+        src.c_str(),
+        dst.c_str(),
+        NULL,
+        NULL,
+        MOVEFILE_COPY_ALLOWED | MOVEFILE_REPLACE_EXISTING,
+        hTransaction
+    );
+
+    if (result) {
+        if (CommitTransaction(hTransaction))
+            cout << "Файл перемещен (commit).\n";
+        else
+            cout << "Ошибка commit: " << GetLastError() << endl;
+    }
+    else {
+        RollbackTransaction(hTransaction);
         cout << "Ошибка перемещения: " << GetLastError() << endl;
+    }
+
+    CloseHandle(hTransaction);
 }
 
 void fileAttributes() {
