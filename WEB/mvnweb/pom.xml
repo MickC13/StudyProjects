@@ -31,6 +31,16 @@
       <version>4.13.1</version>
       <scope>test</scope>
     </dependency>
+    
+     <!-- API сервлетов. scope=provided: класс доступен при компиляции,
+         но НЕ упаковывается в WAR, так как его уже предоставляет
+         контейнер Tomcat во время выполнения. -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>4.0.1</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -85,6 +95,21 @@
           <artifactId>maven-deploy-plugin</artifactId>
           <version>3.1.2</version>
         </plugin>
+        <!-- javadoc:javadoc генерирует HTML-документацию по Javadoc-
+           комментариям исходного кода в target/site/apidocs. -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.1.1</version>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>javadoc</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       </plugins>
     </pluginManagement>
   </build>
