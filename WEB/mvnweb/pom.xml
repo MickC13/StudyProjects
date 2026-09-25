@@ -31,8 +31,8 @@
       <version>4.13.1</version>
       <scope>test</scope>
     </dependency>
-    
-     <!-- API сервлетов. scope=provided: класс доступен при компиляции,
+
+    <!-- API сервлетов. scope=provided: класс доступен при компиляции,
          но НЕ упаковывается в WAR, так как его уже предоставляет
          контейнер Tomcat во время выполнения. -->
     <dependency>
@@ -95,7 +95,13 @@
           <artifactId>maven-deploy-plugin</artifactId>
           <version>3.1.2</version>
         </plugin>
-        <!-- javadoc:javadoc генерирует HTML-документацию по Javadoc-
+      </plugins>
+    </pluginManagement>
+
+    <!-- Плагины, которые реально выполняются в сборке (не только
+         фиксация версий, как в pluginManagement выше). -->
+    <plugins>
+      <!-- javadoc:javadoc генерирует HTML-документацию по Javadoc-
            комментариям исходного кода в target/site/apidocs. -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -110,7 +116,6 @@
           </execution>
         </executions>
       </plugin>
-      </plugins>
-    </pluginManagement>
+    </plugins>
   </build>
 </project>
