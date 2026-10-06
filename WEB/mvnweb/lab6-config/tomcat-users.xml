@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tomcat-users
+    version="1.0"
+    xmlns="http://tomcat.apache.org/xml"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://tomcat.apache.org/xml tomcat-users.xsd">
+
+    <!-- Учебная роль и пользователь лабораторной работы № 6. -->
+    <role rolename="postal-user"/>
+    <user username="student" password="student" roles="postal-user"/>
+</tomcat-users>

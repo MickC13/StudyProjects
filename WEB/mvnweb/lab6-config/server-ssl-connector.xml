@@ -1,0 +1,17 @@
+<!-- Добавить внутрь элемента <Service name="Catalina"> файла conf/server.xml. -->
+<Connector
+    port="8443"
+    protocol="org.apache.coyote.http11.Http11NioProtocol"
+    maxThreads="150"
+    SSLEnabled="true"
+    maxParameterCount="1000"
+    useBodyEncodingForURI="true">
+
+    <SSLHostConfig>
+        <Certificate
+            certificateKeystoreFile="conf/lab6-keystore.p12"
+            certificateKeystorePassword="lab6pass"
+            certificateKeystoreType="PKCS12"
+            type="RSA"/>
+    </SSLHostConfig>
+</Connector>
