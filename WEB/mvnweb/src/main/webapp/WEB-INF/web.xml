@@ -7,7 +7,31 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
   <display-name>Postal JSP Application</display-name>
+
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
+
+  <!-- Лабораторная № 6: доступ к разделу разрешён только роли postal-user. -->
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Защищённый раздел почты</web-resource-name>
+      <url-pattern>/lab6/*</url-pattern>
+      <http-method>GET</http-method>
+      <http-method>POST</http-method>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>postal-user</role-name>
+    </auth-constraint>
+  </security-constraint>
+
+  <!-- Браузер запрашивает логин и пароль стандартным окном BASIC. -->
+  <login-config>
+    <auth-method>BASIC</auth-method>
+    <realm-name>Postal Service Lab 6</realm-name>
+  </login-config>
+
+  <security-role>
+    <role-name>postal-user</role-name>
+  </security-role>
 </web-app>
