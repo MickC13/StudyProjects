@@ -1,0 +1,24 @@
+body {
+    margin: 0;
+    background: #f4f6f8;
+    color: #20252b;
+    font-family: Arial, sans-serif;
+}
+
+.application {
+    max-width: 760px;
+    margin: 40px auto;
+    padding: 28px;
+    background: white;
+    border: 1px solid #d7dde3;
+}
+
+#clientListContainer,
+#showButtonContainer,
+#errorLabelContainer {
+    margin-top: 14px;
+}
+
+.error {
+    color: #b00020;
+}

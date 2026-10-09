@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to="lab8">
+    <!-- Базовые виджеты, RPC и таблицы GWT. -->
+    <inherits name="com.google.gwt.user.User"/>
+    <inherits name="com.google.gwt.user.cellview.CellView"/>
+    <inherits name="com.google.gwt.user.theme.clean.Clean"/>
+
+    <!-- Главный класс клиентского приложения. -->
+    <entry-point class="ru.leti.lab8.client.ParcelModule"/>
+
+    <!-- Только эти пакеты преобразуются компилятором GWT в JavaScript. -->
+    <source path="client"/>
+    <source path="shared"/>
+</module>
