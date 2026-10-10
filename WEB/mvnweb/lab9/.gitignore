@@ -1,0 +1,5 @@
+target/*
+!target/surefire-reports/
+target/surefire-reports/*
+!target/surefire-reports/Post.ParcelListServletTest.txt
+!target/surefire-reports/TEST-Post.ParcelListServletTest.xml
